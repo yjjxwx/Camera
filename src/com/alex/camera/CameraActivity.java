@@ -3,18 +3,15 @@ package com.alex.camera;
 import android.app.Activity;
 import android.content.Intent;
 import android.hardware.Camera;
-import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.view.SurfaceView;
+import android.graphics.SurfaceTexture;
 import android.widget.FrameLayout;
 import com.alex.camera.factory.AndroidCameraFactory;
 import com.alex.camera.manager.ICamera;
-import com.alex.camera.renderer.PreviewFrameRenderer;
 import com.alex.camera.ui.PreviewFrame;
 import com.alex.camera.util.LogUtils;
 import com.alex.camera.util.Utils;
 
-import javax.xml.parsers.FactoryConfigurationError;
 import java.io.IOException;
 
 public class CameraActivity extends Activity {
@@ -37,9 +34,9 @@ public class CameraActivity extends Activity {
         super.onCreate(savedInstanceState);
         mIntent = getIntent();
         setContentView(R.layout.main);
-        initCompenent();
+        initComponent();
     }
-    private void initCompenent(){
+    private void initComponent(){
         mRootView = (FrameLayout)findViewById(R.id.id_camera_root_view);
         mPreviewFrame = new PreviewFrame(this);
         mRootView.addView(mPreviewFrame);
@@ -48,8 +45,9 @@ public class CameraActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+
         if(mCamera == null){
-            new Thread(mStartCameraThread).start();
+//            new Thread(mStartCameraThread).start();
         }
     }
 
@@ -72,4 +70,17 @@ public class CameraActivity extends Activity {
             }
         }
     };
+
+    public void startPreview(){
+        int cameraId = Utils.getCameraId(null, mIntent);
+        mCamera = AndroidCameraFactory.getAndroidCamera(cameraId);
+        mParameters = mCamera.getParameters();
+        try {
+            mCamera.setPreviewTexture(mPreviewFrame.getSurfaceTexture());
+            mCamera.startPreview();
+        }catch (IOException e){
+            LogUtils.e(TAG,"setPreviewTexture error",e);
+            finish();
+        }
+    }
 }

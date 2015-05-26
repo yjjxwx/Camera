@@ -27,17 +27,19 @@ public class DrawUtil {
     private static short [] drawOrder = {
             0, 1, 2, 2, 3, 0
     };
+
     public static void drawRect(){
 
     }
+
     public static void draw(int program, int mTexture){
+        ShaderUtil.checkError("-3 " + program);
         GLES20.glUseProgram(program);
         ShaderUtil.checkError("-2 " + program);
         boolean is = GLES20.glIsTexture(mTexture);
         ShaderUtil.checkError("-1.5 " + mTexture+ "  " + is);
-        GLES20.glActiveTexture(mTexture);
-
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTexture);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         ShaderUtil.checkError("-1");
         mPositionLocation = GLES20.glGetAttribLocation(program,"vPosition");
         ShaderUtil.checkError("0");

@@ -12,5 +12,4 @@ public class Utils {
     public static int getCameraId(SharedPreferences sharedPreferences, Intent intent){
         return Camera.CameraInfo.CAMERA_FACING_BACK;
     }
-
 }

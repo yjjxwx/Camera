@@ -8,25 +8,24 @@ import android.util.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.IntBuffer;
 import java.nio.charset.Charset;
 
 /**
  * Created by alex on 14-11-8.
  */
 public class ShaderUtil {
-    private static String TAG = "ShaderUtil";
+    private final static String TAG = "ShaderUtil";
 
     private static String VERTEX_SHADER_SOURCES = "previewShader/shader.vp";
     private static String FRAGMENT_SHADER_SOURCES = "previewShader/shader.fp";
 
     public static String getString(Context context, String fileName){
-        String result = null;
+        String result;
         AssetManager manager = context.getAssets();
         try {
             InputStream in = manager.open(fileName);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            int read = -1;
+            int read;
             while((read = in.read()) != -1){
                 out.write(read);
             }
@@ -46,33 +45,37 @@ public class ShaderUtil {
         int shader = 0;
         if(shaderType != GLES20.GL_VERTEX_SHADER && shaderType != GLES20.GL_FRAGMENT_SHADER){
             LogUtils.d(TAG, "Not Support for the shader type:" + shaderType);
-            return 0;
+            return shader;
         }
         shader = GLES20.glCreateShader(shaderType);
+        checkError("createShader");
+        LogUtils.d(TAG, "Create Shader Type:" + shaderType);
         GLES20.glShaderSource(shader, sources);
+        LogUtils.d(TAG, "Shader Source: " + sources);
+        checkError("shaderSource");
         GLES20.glCompileShader(shader);
+        LogUtils.d(TAG,"Compile Shader");
+        checkError("compileShader");
         int [] comStatus = new int[1];
         GLES20.glGetShaderiv(shader,GLES20.GL_COMPILE_STATUS,comStatus,0);
-        if(comStatus[0] != GLES20.GL_COMPILE_STATUS){
-            String pre = "";
+        if(comStatus[0] != GLES20.GL_TRUE){
+            String pre;
             if(shaderType == GLES20.GL_VERTEX_SHADER){
                 pre = "Compile Vertex Shader Error : ";
             }else{
                 pre = "Compile Fragment Shader Error : ";
             }
-            Log.e(TAG,pre + GLES20.glGetShaderInfoLog(shader));
+            LogUtils.e(TAG,pre + GLES20.glGetShaderInfoLog(shader));
             GLES20.glDeleteShader(shader);
-            shader = 0;
             throw new RuntimeException(pre);
         }
         return shader;
     }
 
     public static void checkError(String message){
-        int error = 0;
+        int error;
         if((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR){
-            String errorMessage = GLES20.glGetString(error);
-            LogUtils.e(TAG,message + " " + error +" :" + errorMessage);
+            LogUtils.e(TAG,message + " :" + error);
         }
     }
 
@@ -93,7 +96,7 @@ public class ShaderUtil {
         GLES20.glLinkProgram(program);
         int [] linkStatus = new int[1];
         GLES20.glGetProgramiv(program, GLES20.GL_LINK_STATUS,linkStatus,0);
-        if(linkStatus[0] != GLES20.GL_COMPILE_STATUS){
+        if(linkStatus[0] != GLES20.GL_TRUE){
             LogUtils.e(TAG,"Link Error:" + GLES20.glGetProgramInfoLog(program));
             GLES20.glDeleteProgram(program);
             program = 0;
