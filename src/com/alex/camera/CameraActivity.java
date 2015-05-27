@@ -101,7 +101,7 @@ public class CameraActivity extends BaseActivity {
                         Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)),
                         new CompareSizesByArea());
                 ImageReader mImageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight(),
-                        ImageFormat.JPEG, maxImages);
+                        ImageFormat.JPEG, 2);
                 mImageReader.setOnImageAvailableListener(
                         mOnImageAvailableListener, mCameraHandler);
 
