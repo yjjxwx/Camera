@@ -21,8 +21,6 @@ import android.os.Message;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
-import android.view.Window;
-import android.view.WindowManager;
 
 import com.alex.camera.ui.AutoFixTextureView;
 import com.alex.camera.util.CompareSizesByArea;
@@ -53,8 +51,6 @@ public class CameraActivity extends BaseActivity {
     @Override
     protected void onCreateTask(Bundle savedInstanceState) {
         super.onCreateTask(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.camera_root);
         mCameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         mTextureView = (AutoFixTextureView) findViewById(R.id.preview);

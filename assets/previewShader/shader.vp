@@ -1,9 +1,0 @@
-precision mediump float;
-attribute vec4 vPosition;
-attribute vec2 in_texture_coordinate;
-varying vec2 texture_coordinate;
-void main()
-{
-    gl_Position = vPosition;
-    texture_coordinate = in_texture_coordinate;
-}
